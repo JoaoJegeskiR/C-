@@ -18,17 +18,7 @@ namespace ERP_Vendas_Celulares
             {
                 MostrarMenu();
                 if (!int.TryParse(Console.ReadLine(), out opcao)) continue;
-                switch (opcao)
-                {
-                    case 1: Cadastrar(categorias, "Categoria"); break;
-                    case 2: Cadastrar(fornecedores, "Fornecedor"); break;
-                    case 3: CadastrarProduto(); break;
-                    case 4: Listar(categorias, "CATEGORIAS CADASTRADAS"); break;
-                    case 5: Listar(fornecedores, "FORNECEDORES CADASTRADOS"); break;
-                    case 6: ListarProdutos(); break;
-                    case 0: Console.WriteLine("Saindo do sistema..."); break;
-                    default: Console.WriteLine("Opção inválida!"); break;
-                }
+                ExecutarOpcao(opcao);
             } while (opcao != 0);
         }
 
@@ -38,6 +28,21 @@ namespace ERP_Vendas_Celulares
             Console.WriteLine("1 - Cadastro de Categorias\n2 - Cadastro de Fornecedores\n3 - Cadastro de Produtos");
             Console.WriteLine("4 - Listar Categorias\n5 - Listar Fornecedores\n6 - Listar Produtos\n0 - Sair");
             Console.Write("Digite sua opção: ");
+        }
+
+        static void ExecutarOpcao(int opcao)
+        {
+            switch (opcao)
+            {
+                case 1: Cadastrar(categorias, "Categoria"); break;
+                case 2: Cadastrar(fornecedores, "Fornecedor"); break;
+                case 3: CadastrarProduto(); break;
+                case 4: Listar(categorias, "CATEGORIAS CADASTRADAS"); break;
+                case 5: Listar(fornecedores, "FORNECEDORES CADASTRADOS"); break;
+                case 6: ListarProdutos(); break;
+                case 0: Console.WriteLine("Saindo do sistema..."); break;
+                default: Console.WriteLine("Opção inválida!"); break;
+            }
         }
 
         static void Cadastrar<T>(List<T> lista, string tipo) where T : new()
@@ -105,27 +110,5 @@ namespace ERP_Vendas_Celulares
 
             Console.WriteLine("Banco de dados inicializado!");
         }
-    }
-
-    class Categoria
-    {
-        public string Nome { get; }
-        public Categoria(string nome) => Nome = nome;
-        public override string ToString() => Nome;
-    }
-
-    class Fornecedor
-    {
-        public string Nome { get; }
-        public Fornecedor(string nome) => Nome = nome;
-        public override string ToString() => Nome;
-    }
-
-    class Produto
-    {
-        public string Nome { get; }
-        public Categoria Categoria { get; }
-        public Fornecedor Fornecedor { get; }
-        public Produto(string nome, Categoria categoria, Fornecedor fornecedor) => (Nome, Categoria, Fornecedor) = (nome, categoria, fornecedor);
     }
 }
