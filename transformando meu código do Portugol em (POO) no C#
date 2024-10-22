@@ -1,0 +1,144 @@
+using System;
+using System.Collections.Generic;
+
+namespace ERP_Vendas_Celulares
+{
+    class Program
+    {
+        const int LIMITE = 30;
+        static List<Categoria> categorias = new List<Categoria>();
+        static List<Fornecedor> fornecedores = new List<Fornecedor>();
+        static List<Produto> produtos = new List<Produto>();
+
+        static void Main()
+        {
+            PopularBancoDados();
+            int opcao;
+
+            do
+            {
+                MostrarMenu();
+                if (!int.TryParse(Console.ReadLine(), out opcao)) continue;
+
+                switch (opcao)
+                {
+                    case 1: CadastrarCategoria(); break;
+                    case 2: CadastrarFornecedor(); break;
+                    case 3: CadastrarProduto(); break;
+                    case 4: Listar(categorias, "CATEGORIAS CADASTRADAS"); break;
+                    case 5: Listar(fornecedores, "FORNECEDORES CADASTRADOS"); break;
+                    case 6: ListarProdutos(); break;
+                    case 0: Console.WriteLine("Saindo do sistema..."); break;
+                    default: Console.WriteLine("Opção inválida!"); break;
+                }
+            } while (opcao != 0);
+        }
+
+        static void MostrarMenu()
+        {
+            Console.WriteLine("BEM VINDO AO MEU ERP DE VENDAS DE CELULARES");
+            Console.WriteLine("1 - Cadastro de Categorias\n2 - Cadastro de Fornecedores\n3 - Cadastro de Produtos");
+            Console.WriteLine("4 - Listar Categorias\n5 - Listar Fornecedores\n6 - Listar Produtos\n0 - Sair");
+            Console.Write("Digite sua opção: ");
+        }
+
+        static void CadastrarCategoria()
+        {
+            if (categorias.Count < LIMITE)
+            {
+                Console.Write("Nome da categoria: ");
+                categorias.Add(new Categoria(Console.ReadLine()));
+                Console.WriteLine("Categoria cadastrada!");
+            }
+            else Console.WriteLine("Limite de categorias atingido!");
+        }
+
+        static void CadastrarFornecedor()
+        {
+            if (fornecedores.Count < LIMITE)
+            {
+                Console.Write("Nome do fornecedor: ");
+                fornecedores.Add(new Fornecedor(Console.ReadLine()));
+                Console.WriteLine("Fornecedor cadastrado!");
+            }
+            else Console.WriteLine("Limite de fornecedores atingido!");
+        }
+
+        static void CadastrarProduto()
+        {
+            if (produtos.Count < LIMITE)
+            {
+                Console.Write("Nome do produto: ");
+                var nome = Console.ReadLine();
+                Listar(categorias, "Escolha uma categoria:");
+                var categoriaIndex = int.Parse(Console.ReadLine()) - 1;
+                Listar(fornecedores, "Escolha um fornecedor:");
+                var fornecedorIndex = int.Parse(Console.ReadLine()) - 1;
+                produtos.Add(new Produto(nome, categorias[categoriaIndex], fornecedores[fornecedorIndex]));
+                Console.WriteLine("Produto cadastrado!");
+            }
+            else Console.WriteLine("Limite de produtos atingido!");
+        }
+
+        static void Listar<T>(List<T> lista, string titulo)
+        {
+            Console.WriteLine(titulo);
+            if (lista.Count > 0)
+                for (int i = 0; i < lista.Count; i++)
+                    Console.WriteLine($"{i + 1}. {lista[i]}");
+            else Console.WriteLine("Nenhum cadastrado.");
+        }
+
+        static void ListarProdutos()
+        {
+            Console.WriteLine("PRODUTOS CADASTRADOS:");
+            if (produtos.Count > 0)
+                foreach (var produto in produtos)
+                    Console.WriteLine($"Produto: {produto.Nome}, Categoria: {produto.Categoria.Nome}, Fornecedor: {produto.Fornecedor.Nome}");
+            else Console.WriteLine("Nenhum produto cadastrado.");
+        }
+
+        static void PopularBancoDados()
+        {
+            var categoriasLote = new[] { "Smartphones", "Acessórios", "Carregadores", "Capinhas", "Fones de ouvido" };
+            var fornecedoresLote = new[] { "Samsung", "Apple", "Xiaomi", "Motorola", "LG" };
+            var produtosLote = new[]
+            {
+                new { Nome = "Galaxy S21", CategoriaIndex = 0, FornecedorIndex = 0 },
+                new { Nome = "iPhone 13", CategoriaIndex = 1, FornecedorIndex = 1 },
+                new { Nome = "Redmi Note 10", CategoriaIndex = 2, FornecedorIndex = 2 },
+                new { Nome = "Moto G100", CategoriaIndex = 3, FornecedorIndex = 3 },
+                new { Nome = "LG Velvet", CategoriaIndex = 4, FornecedorIndex = 4 }
+            };
+
+            foreach (var nome in categoriasLote) categorias.Add(new Categoria(nome));
+            foreach (var nome in fornecedoresLote) fornecedores.Add(new Fornecedor(nome));
+            foreach (var produto in produtosLote)
+                produtos.Add(new Produto(produto.Nome, categorias[produto.CategoriaIndex], fornecedores[produto.FornecedorIndex]));
+
+            Console.WriteLine("Banco de dados inicializado!");
+        }
+    }
+
+    class Categoria
+    {
+        public string Nome { get; }
+        public Categoria(string nome) => Nome = nome;
+        public override string ToString() => Nome; // Para facilitar a listagem
+    }
+
+    class Fornecedor
+    {
+        public string Nome { get; }
+        public Fornecedor(string nome) => Nome = nome;
+        public override string ToString() => Nome; // Para facilitar a listagem
+    }
+
+    class Produto
+    {
+        public string Nome { get; }
+        public Categoria Categoria { get; }
+        public Fornecedor Fornecedor { get; }
+        public Produto(string nome, Categoria categoria, Fornecedor fornecedor) => (Nome, Categoria, Fornecedor) = (nome, categoria, fornecedor);
+    }
+}
